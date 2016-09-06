@@ -21,8 +21,12 @@ type LabeledAttribute = (Attribute,String,Class)
 expandTrainingData :: [TrainingData] -> [LabeledAttribute]
 expandTrainingData ((d,c):xs) = map (\(a,s) -> (a,s,c)) d
 
+
+
 entropy :: [Double] -> Double
 entropy [] = 0
+entropy [0.0] = 0
 entropy [x] = (-x) * logBase 2 x
 entropy (x:xs) = entropy [x] + entropy xs
+
 
