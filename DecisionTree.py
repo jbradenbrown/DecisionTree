@@ -5,6 +5,7 @@
 
 from math import log
 from random import randint
+from numbers import Number
 
 class Tree:
 	def __init__ (self, label):
@@ -55,7 +56,7 @@ def r_classData (size, attrNum):
 
 # Return majority class of a class partitioned list
 def majorityClass (classPartedData):
-	return 0 if len(classPartedData[0]) > len(classPartedData[1]) else 1
+	return 0 if len(classPartedData[0]) >= len(classPartedData[1]) else 1
 
 # Return last element of a list
 def i_lastElem (l):
@@ -71,12 +72,9 @@ def l_withoutI (l, i):
 
 # Train a binary Decision Tree on some data
 def train(classifiedData, labels):
-	print(classifiedData)
-	print(labels)
 	if not classifiedData:
 		return None
 	if len(labels) == 1 or entropy(pDist(bPart(classifiedData, i_lastElem(classifiedData[0])))) == 0:
-		print("out of labels or entropy is 0")
 		return (Tree (majorityClass(bPart(classifiedData, i_lastElem(classifiedData[0]))), None,None))
 	attrParts = list(map(lambda x: bPart(classifiedData,x),range(0,i_lastElem(classifiedData[0]))))
 	classParts = list(map(lambda x: list(map(lambda y: bPart(y,i_lastElem(classifiedData[0])),x)),attrParts))
@@ -87,7 +85,6 @@ def train(classifiedData, labels):
 	bestAttr = pickAttr(list(zip(Ig, labels[:-1]))) 
 	bestAttrPart = bPart(classifiedData,labels.index(bestAttr[0][1]))
 	removedBestAttr = list(map(lambda x: list(map(lambda y: l_withoutI(y,labels.index(bestAttr[0][1])),x)),bestAttrPart))
-	print("best Attr ",bestAttr)
 	return (Tree (bestAttr[0][1],train(removedBestAttr[0],l_without(labels,bestAttr[0][1])),train(removedBestAttr[1],l_without(labels,bestAttr[0][1]))))
 	#return ([labels,attrParts,classParts,pDists,classPartLens,condEnt,Ig,bestAttr,bestAttrPart])
 
@@ -99,9 +96,15 @@ def readInput (fileName):
 	labels = ifile.readline().strip().split()
 
 	for line in ifile:
-		classData.append(line.strip().split())
+		classData.append(list(map(int,line.strip().split())))
 	
 	return (labels,classData)
 
-def printTree (tree,prefix):
-	while 
+def printTree (tree, prefix):
+	if not tree or isinstance(tree.label,Number):
+		return
+	print(prefix,tree.label," = 0 :","  " + str(tree.children[0].label) if isinstance(tree.children[0].label,Number) else '' ,sep='')
+	printTree(tree.children[0],prefix+"| ")
+	print(prefix,tree.label," = 1 :","  " + str(tree.children[1].label) if isinstance(tree.children[1].label,Number) else '' ,sep='')
+	printTree(tree.children[1],prefix+"| ")
+
